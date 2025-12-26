@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>VR Лабораторная работа</title>
+    
+    <!-- ОБЯЗАТЕЛЬНО: добавьте viewport метатег -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Используем стабильную версию A-Frame -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    
+    <!-- Простые стили -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 10000;
+            max-width: 300px;
+        }
+        .name {
+            color: gold;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .debug {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            color: #0f0;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Информация об авторе -->
+    <div id="info">
+        <div class="name">Шеляков Владислав</div>
+        <div>Группа: ПИН-22М</div>
+        <div>Лабораторная работа №3</div>
+        <div style="margin-top: 10px; color: #aaa;">
+            На компьютере: вращайте мышью<br>
+            На телефоне: двигайте устройство
+        </div>
+    </div>
+    
+    <!-- ОСНОВНАЯ СЦЕНА -->
+    <a-scene 
+        background="color: #000011"
+        loading-screen="dotsColor: white; backgroundColor: #000"
+        vr-mode-ui="enabled: true">
+        
+        <!-- ТЕКСТ В 3D ПРОСТРАНСТВЕ -->
+        <a-text 
+            value="ДЖИМ РЕЙНОР\nMARINE"
+            color="gold"
+            align="center"
+            position="0 4 -5"
+            scale="3 3 3"
+            width="6">
+        </a-text>
+        
+        <!-- ПЕРСОНАЖ (упрощенная версия) -->
+        <!-- Голова -->
+        <a-sphere 
+            position="0 1.7 -3" 
+            radius="0.25" 
+            color="#FFD700"
+            metalness="0.3"
+            roughness="0.7">
+        </a-sphere>
+        
+        <!-- Тело -->
+        <a-box 
+            position="0 1 -3" 
+            width="0.5" 
+            height="0.8" 
+            depth="0.3" 
+            color="#1E3A8A"
+            metalness="0.5">
+        </a-box>
+        
+        <!-- Шлем -->
+        <a-ring 
+            position="0 1.7 -2.8" 
+            radius-inner="0.2" 
+            radius-outer="0.25" 
+            color="#60A5FA"
+            rotation="0 0 0">
+        </a-ring>
+        
+        <!-- Плечи -->
+        <a-box 
+            position="-0.3 1 -2.8" 
+            width="0.15" 
+            height="0.3" 
+            depth="0.15" 
+            color="#2563EB">
+        </a-box>
+        
+        <a-box 
+            position="0.3 1 -2.8" 
+            width="0.15" 
+            height="0.3" 
+            depth="0.15" 
+            color="#2563EB">
+        </a-box>
+        
+        <!-- Оружие -->
+        <a-box 
+            position="0.5 1 -2.8" 
+            width="1" 
+            height="0.08" 
+            depth="0.08" 
+            color="#4B5563"
+            rotation="0 0 -15">
+        </a-box>
+        
+        <!-- ПОДПИСЬ ПЕРСОНАЖА -->
+        <a-text 
+            value="Terran Marine\nStarCraft"
+            color="#FFFFFF"
+            align="center"
+            position="0 0.2 -3"
+            scale="1.5 1.5 1.5"
+            width="3">
+        </a-text>
+        
+        <!-- ПОЛ -->
+        <a-plane 
+            position="0 0 -4" 
+            rotation="-90 0 0" 
+            width="10" 
+            height="10" 
+            color="#333333"
+            roughness="0.8">
+        </a-plane>
+        
+        <!-- НЕБО -->
+        <a-sky color="#000022"></a-sky>
+        
+        <!-- ОСВЕЩЕНИЕ -->
+        <a-light 
+            type="directional" 
+            color="#FFFFFF" 
+            intensity="0.8" 
+            position="3 5 2">
+        </a-light>
+        
+        <a-light 
+            type="ambient" 
+            color="#FFFFFF" 
+            intensity="0.3">
+        </a-light>
+        
+        <!-- КАМЕРА -->
+        <a-entity 
+            camera="fov: 80"
+            look-controls
+            position="0 1.6 0">
+        </a-entity>
+        
+    </a-scene>
+    
+    <!-- Дебаг информация (если что-то не работает) -->
+    <div class="debug" id="debug"></div>
+    
+    <script>
+        // Дебаг-скрипт для проверки работы
+        document.addEventListener('DOMContentLoaded', function() {
+            const debug = document.getElementById('debug');
+            const scene = document.querySelector('a-scene');
+            
+            // Проверяем загрузку A-Frame
+            if (typeof AFRAME === 'undefined') {
+                debug.innerHTML = 'ERROR: A-Frame не загружен!';
+                debug.style.color = 'red';
+            } else {
+                debug.innerHTML = 'A-Frame загружен ✓';
+            }
+            
+            // Ждем загрузки сцены
+            scene.addEventListener('loaded', function() {
+                debug.innerHTML += '<br>Сцена загружена ✓';
+            });
+            
+            // Проверка через 3 секунды
+            setTimeout(() => {
+                const entities = scene.querySelectorAll('a-entity, a-box, a-sphere');
+                debug.innerHTML += `<br>Элементов на сцене: ${entities.length}`;
+                
+                if (entities.length === 0) {
+                    debug.innerHTML += '<br>ОШИБКА: элементы не созданы!';
+                    debug.style.color = 'red';
+                }
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
